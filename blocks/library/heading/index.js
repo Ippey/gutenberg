@@ -8,6 +8,7 @@ import { isString } from 'lodash';
  */
 import { __, sprintf } from 'i18n';
 import { concatChildren } from 'element';
+import { Toolbar } from 'components';
 
 /**
  * Internal dependencies
@@ -16,6 +17,8 @@ import './style.scss';
 import { registerBlockType, createBlock, query } from '../../api';
 import Editable from '../../editable';
 import BlockControls from '../../block-controls';
+import InspectorControls from '../../inspector-controls';
+import AlignmentToolbar from '../../alignment-toolbar';
 
 const { children, prop } = query;
 
@@ -83,14 +86,14 @@ registerBlockType( 'core/heading', {
 	},
 
 	edit( { attributes, setAttributes, focus, setFocus, mergeBlocks, insertBlockAfter } ) {
-		const { content, nodeName = 'H2' } = attributes;
+		const { align, content, nodeName = 'H2' } = attributes;
 
 		return [
 			focus && (
 				<BlockControls
 					key="controls"
 					controls={
-						'123456'.split( '' ).map( ( level ) => ( {
+						'234'.split( '' ).map( ( level ) => ( {
 							icon: 'heading',
 							title: sprintf( __( 'Heading %s' ), level ),
 							isActive: 'H' + level === nodeName,
@@ -99,6 +102,27 @@ registerBlockType( 'core/heading', {
 						} ) )
 					}
 				/>
+			),
+			focus && (
+				<InspectorControls key="inspector">
+					<Toolbar
+						controls={
+							'123456'.split( '' ).map( ( level ) => ( {
+								icon: 'heading',
+								title: sprintf( __( 'Heading %s' ), level ),
+								isActive: 'H' + level === nodeName,
+								onClick: () => setAttributes( { nodeName: 'H' + level } ),
+								subscript: level,
+							} ) )
+						}
+					/>
+					<AlignmentToolbar
+						value={ align }
+						onChange={ ( nextAlign ) => {
+							setAttributes( { align: nextAlign } );
+						} }
+					/>
+				</InspectorControls>
 			),
 			<Editable
 				key="editable"
@@ -115,16 +139,17 @@ registerBlockType( 'core/heading', {
 						content: after,
 					} ) );
 				} }
+				style={ { textAlign: align } }
 			/>,
 		];
 	},
 
 	save( { attributes } ) {
-		const { nodeName = 'H2', content } = attributes;
+		const { align, nodeName = 'H2', content } = attributes;
 		const Tag = nodeName.toLowerCase();
 
 		return (
-			<Tag>
+			<Tag style={ { textAlign: align } } >
 				{ content }
 			</Tag>
 		);
