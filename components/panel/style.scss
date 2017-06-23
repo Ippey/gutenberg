@@ -18,7 +18,7 @@
 }
 
 .components-panel__body {
-	padding: 15px;
+	padding: $panel-padding;
 	border: 1px solid $light-gray-500;
 	margin-left: -1px;
 	margin-right: -1px;
@@ -29,7 +29,7 @@
 	justify-content: space-between;
 	align-items: center;
 	background: $light-gray-300;
-	padding: 0 15px;
+	padding: 0 $panel-padding;
 	height: 50px;
 	border: 1px solid $light-gray-500;
 	margin-left: -1px;
