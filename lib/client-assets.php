@@ -374,6 +374,11 @@ function gutenberg_scripts_and_styles( $hook ) {
 	 * Scripts
 	 */
 	wp_enqueue_media();
+	wp_enqueue_editor();
+
+	wp_add_inline_script(
+		'editor', 'window.wp.oldEditor = window.wp.editor;', 'after'
+	);
 
 	gutenberg_extend_wp_api_backbone_client();
 
@@ -381,10 +386,15 @@ function gutenberg_scripts_and_styles( $hook ) {
 	wp_enqueue_script(
 		'wp-editor',
 		gutenberg_url( 'editor/build/index.js' ),
-		array( 'wp-api', 'wp-date', 'wp-i18n', 'wp-blocks', 'wp-element', 'wp-components', 'wp-utils' ),
+		array( 'wp-api', 'wp-date', 'wp-i18n', 'wp-blocks', 'wp-element', 'wp-components', 'wp-utils', 'editor' ),
 		filemtime( gutenberg_dir_path() . 'editor/build/index.js' ),
 		true // enqueue in the footer.
 	);
+
+	wp_localize_script( 'wp-editor', 'tinyMCEPreInit', array(
+		'baseURL' => includes_url( 'js/tinymce' ),
+		'suffix' => SCRIPT_DEBUG ? '' : '.min',
+	) );
 
 	$post_id = null;
 	if ( isset( $_GET['post_id'] ) && (int) $_GET['post_id'] > 0 ) {
